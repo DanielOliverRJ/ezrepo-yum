@@ -1,0 +1,8 @@
+[main]
+reposdir=
+
+[openstack]
+name=OpenStack Current Passed CI
+baseurl=http://trunk.rdoproject.org/centos7/current-passed-ci/
+gpgcheck=0
+enabled=0

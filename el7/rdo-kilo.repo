@@ -1,0 +1,17 @@
+[main]
+reposdir=
+
+[openstack]
+name=OpenStack Kilo Repository
+baseurl=http://repos.fedorapeople.org/repos/openstack/openstack-kilo/el7/
+skip_if_unavailable=0
+enabled=0
+gpgcheck=1
+gpgkey=https://raw.githubusercontent.com/redhat-openstack/rdo-release/kilo/RPM-GPG-KEY-RDO-kilo
+
+[openstack-testing]
+name=OpenStack Kilo Testing
+baseurl=http://repos.fedorapeople.org/repos/openstack/openstack-kilo/testing/el7/
+skip_if_unavailable=0
+gpgcheck=0
+enabled=0
