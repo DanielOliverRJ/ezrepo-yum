@@ -71,8 +71,19 @@ fi
 cat <<HTML_HEADER
 Content-type: text/html
 
+<HTML>
+<BODY>
+<PRE>
 HTML_HEADER
+
 
 for server in ${servers}; do
   echo "http://${server}/${FORM_snap}/el${FORM_release}/${FORM_prod}/${FORM_repo}"
 done
+
+
+cat <<HTML_FOOTER
+</PRE>
+</BODY>
+</HTML>
+HTML_FOOTER
