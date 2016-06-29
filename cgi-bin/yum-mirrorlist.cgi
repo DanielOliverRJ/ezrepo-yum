@@ -79,7 +79,7 @@ HTML_HEADER
 if [ -f "${MIRRORLIST}" ]; then
   while read mirror; do
     echo "http://${mirror}/${FORM_snap}/el${FORM_release}/${FORM_prod}/${FORM_repo}"
-  done < './mirrorlist.txt'
+  done <"${MIRRORLIST}"
 else
   echo '# No mirrors'
 fi
