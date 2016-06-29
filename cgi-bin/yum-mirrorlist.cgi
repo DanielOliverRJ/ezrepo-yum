@@ -1,6 +1,6 @@
 #!/bin/sh
-servers='192.168.1.4 192.168.1.5:8080 localhost'
 
+MIRRORLIST='/etc/ezrepo/mirrorlist.txt'
 
 #set defaults
 FORM_snap='latest'
@@ -76,11 +76,13 @@ Content-type: text/html
 <PRE>
 HTML_HEADER
 
-
-for server in ${servers}; do
-  echo "http://${server}/${FORM_snap}/el${FORM_release}/${FORM_prod}/${FORM_repo}"
-done
-
+if [ -f "${MIRRORLIST}" ]; then
+  while read mirror; do
+    echo "http://${mirror}/${FORM_snap}/el${FORM_release}/${FORM_prod}/${FORM_repo}"
+  done < './mirrorlist.txt'
+else
+  echo '# No mirrors'
+fi
 
 cat <<HTML_FOOTER
 </PRE>
