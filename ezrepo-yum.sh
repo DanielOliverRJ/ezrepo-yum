@@ -16,7 +16,9 @@ file=$(basename "${repo_config}")
 product="${file%.*}"
 
 path_base='/var/www/repos/latest'
-path_product="${path_base}/el7/${product}"
+path_product="${path_base}/yum/${product}"
+
+arch='x86_64'
 
 #
 # reposync
@@ -47,7 +49,7 @@ global_exit=0
 #===================================
 # Process all repos in config file
 #===================================
-repo_list=$(crudini --get --list ${repo_config})
+repo_list=$(crudini --get --list "${repo_config}")
 
 printf '%s\n' "${repo_list}"| while IFS= read -r repo_id; do
   # Skip section if called main
@@ -57,13 +59,13 @@ printf '%s\n' "${repo_list}"| while IFS= read -r repo_id; do
 
   echo "---"
   echo "Repo: ${repo_id}"
-  path_repo="${path_product}/${repo_id}"
+  path_repo="${path_product}/${arch}/${repo_id}"
 
   # Mirror repo structure
   n=0
   while [ $n -lt 3 ]; do
     echo "INFO: Starting reposync run $n" 1>&2
-    ${cmd_reposync} -c ${repo_config} -r ${repo_id} -p ${path_product}
+    ${cmd_reposync} -c ${repo_config} -r ${repo_id} -p ${path_product}/${arch}
     exitcode=$?
     if [ $exitcode -eq 0 ];then break; fi
     echo "WARN: Reposync run $n failed with exitcode $exitcode" 1>&2
@@ -93,8 +95,8 @@ printf '%s\n' "${repo_list}"| while IFS= read -r repo_id; do
 
   # Add errata if available
   set -o pipefail
-  updateinfo=$(ls -1t  ${path_repo}/*-updateinfo.xml.gz 2>/dev/null | head -1 )
-  if [ -f $updateinfo  &&  $? -eq 0 ]; then
+  updateinfo=$(ls -1t  "${path_repo}/*-updateinfo.xml.gz" 2>/dev/null | head -1 )
+  if [ -f "$updateinfo" ] && [ $? -eq 0 ]; then
     echo "INFO: Errata - updating information for ${repo_id}" 1>&2
     #\cp $updateinfo ${path_repo}/updateinfo.xml.gz
     #gunzip -df ${path_repo}/updateinfo.xml.gz

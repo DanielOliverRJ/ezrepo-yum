@@ -1,11 +1,11 @@
 #!/bin/sh
 
 MIRRORLIST='/etc/ezrepo/mirrorlist.txt'
+#MIRRORLIST='./mirrorlist.txt.example'
 
 #set defaults
 FORM_snap='latest'
-FORM_release='7'
-FORM_prod='centos'
+FORM_prod='centos-7'
 FORM_repo='server'
 FORM_arch='x86_64'
 
@@ -14,8 +14,8 @@ FORM_arch='x86_64'
 # Handle GET and POST requests... (the QUERY_STRING will be set)
 if [ -n "${QUERY_STRING}" ]; then
   # name=value params, separated by either '&' or ';'
-  if echo ${QUERY_STRING} | grep '=' >/dev/null ; then
-    for Q in $(echo ${QUERY_STRING} | tr ";&" "\012") ; do
+  if echo "${QUERY_STRING}" | grep '=' >/dev/null ; then
+    for Q in $(echo "${QUERY_STRING}" | tr ";&" "\012") ; do
       #
       # Clear our local variables
       #
@@ -27,10 +27,10 @@ if [ -n "${QUERY_STRING}" ]; then
       # get the name of the key, and decode it
       #
       name=${Q%%=*}
-      name=$(echo ${name} | \
+      name=$(echo "${name}" | \
              sed -e 's/%\(\)/\\\x/g' | \
              tr "+" " ")
-      name=$(echo ${name} | \
+      name=$(echo "${name}" | \
              tr -d ".-")
       name=$(printf ${name})
 
@@ -42,7 +42,7 @@ if [ -n "${QUERY_STRING}" ]; then
       # printf, and then remove it.
       #
       tmpvalue=${Q#*=}
-      tmpvalue=$(echo ${tmpvalue} | \
+      tmpvalue=$(echo "${tmpvalue}" | \
                  sed -e 's/%\(..\)/\\\x\1 /g')
       #echo "Intermediate \$value: ${tmpvalue}" 1>&2
 
@@ -59,7 +59,7 @@ if [ -n "${QUERY_STRING}" ]; then
       eval "export FORM_${name}='${value}'"
     done
   else # keywords: foo.cgi?a+b+c
-    Q=$(echo ${QUERY_STRING} | tr '+' ' ')
+    Q=$(echo "${QUERY_STRING}" | tr '+' ' ')
     eval "export KEYWORDS='${Q}'"
   fi
 fi
@@ -68,6 +68,10 @@ fi
 #-----------------------------------------
 # Print output to STDOUT
 #-----------------------------------------
+if [ 'latest' != "${FORM_snap}" ]; then
+  FORM_snap="archive/${FORM_snap}"
+fi
+
 cat <<HTML_HEADER
 Content-type: text/html
 
@@ -78,7 +82,7 @@ HTML_HEADER
 
 if [ -f "${MIRRORLIST}" ]; then
   while read mirror; do
-    echo "http://${mirror}/${FORM_snap}/el${FORM_release}/${FORM_prod}/${FORM_repo}"
+    echo "http://${mirror}/${FORM_snap}/yum/${FORM_prod}/${FORM_arch}/${FORM_repo}/"
   done <"${MIRRORLIST}"
 else
   echo '# No mirrors'
