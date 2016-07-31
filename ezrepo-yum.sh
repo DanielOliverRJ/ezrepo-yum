@@ -24,7 +24,7 @@ arch='x86_64'
 # reposync
 #  -l       to use fastmirror plugin
 #  --source to grab *.src.rpm
-#  -m       to download comps.xml
+#  -m       to download comps.xml for pkg groups
 #  --download_metadata to get non-standard metadata
 #
 #  -c  specify a config file
@@ -61,11 +61,12 @@ printf '%s\n' "${repo_list}"| while IFS= read -r repo_id; do
   echo "Repo: ${repo_id}"
   path_repo="${path_product}/${arch}/${repo_id}"
 
-  # Mirror repo structure
+  # Mirror repo structure using reposync
   n=0
   while [ $n -lt 3 ]; do
     echo "INFO: Starting reposync run $n" 1>&2
-    ${cmd_reposync} -c ${repo_config} -r ${repo_id} -p ${path_product}/${arch}
+    ${cmd_reposync} -c "${repo_config}"\
+      -r "${repo_id}" -p "${path_product}/${arch}"
     exitcode=$?
     if [ $exitcode -eq 0 ];then break; fi
     echo "WARN: Reposync run $n failed with exitcode $exitcode" 1>&2
@@ -86,7 +87,7 @@ printf '%s\n' "${repo_list}"| while IFS= read -r repo_id; do
   n=0
   while [ $n -lt 2 ]; do
     echo "INFO: Starting createrepo run $n" 1>&2
-    ${cmd_createrepo} ${opts_createrepo} ${path_repo}
+    ${cmd_createrepo} "${opts_createrepo}" "${path_repo}"
     exitcode=$?
     if [ $exitcode -eq 0 ];then break; fi
     echo "WARN: Createrepo run $n failed with exitcode $exitcode" 1>&2
@@ -95,12 +96,12 @@ printf '%s\n' "${repo_list}"| while IFS= read -r repo_id; do
 
   # Add errata if available
   set -o pipefail
-  updateinfo=$(ls -1t  "${path_repo}/*-updateinfo.xml.gz" 2>/dev/null | head -1 )
+  updateinfo=$(find "${path_repo}/*-updateinfo.xml.gz" 2>/dev/null | head -1 )
   if [ -f "$updateinfo" ] && [ $? -eq 0 ]; then
     echo "INFO: Errata - updating information for ${repo_id}" 1>&2
-    #\cp $updateinfo ${path_repo}/updateinfo.xml.gz
-    #gunzip -df ${path_repo}/updateinfo.xml.gz
-    #modifyrepo ${path_repo}/updateinfo.xml ${path_repo}/repodata/
+    cp $updateinfo ${path_repo}/updateinfo.xml.gz
+    gunzip -df ${path_repo}/updateinfo.xml.gz
+    modifyrepo ${path_repo}/updateinfo.xml ${path_repo}/repodata/
   else
     echo "INFO: Errata - nothing to be processed for ${repo_id}" 1>&2
   fi
