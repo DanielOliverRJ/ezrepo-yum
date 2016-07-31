@@ -4,9 +4,9 @@ MIRRORLIST='/etc/ezrepo/mirrorlist.txt'
 #MIRRORLIST='./mirrorlist.txt.example'
 
 #set defaults
-FORM_snap='latest'
-FORM_prod='centos-7'
+FORM_product='centos-7'
 FORM_repo='server'
+FORM_snap='latest'
 FORM_arch='x86_64'
 
 
@@ -81,8 +81,8 @@ Content-type: text/html
 HTML_HEADER
 
 if [ -f "${MIRRORLIST}" ]; then
-  while read mirror; do
-    echo "http://${mirror}/${FORM_snap}/yum/${FORM_prod}/${FORM_arch}/${FORM_repo}/"
+  while read -r mirror; do
+    echo "http://${mirror}/${FORM_snap}/yum/${FORM_product}/${FORM_arch}/${FORM_repo}/"
   done <"${MIRRORLIST}"
 else
   echo '# No mirrors'
