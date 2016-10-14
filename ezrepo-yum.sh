@@ -11,7 +11,7 @@
 #======================================================================
 
 # read in name of config file
-repo_config=$1
+repo_config=${1?"Usage: $0 CONFIG_FILE"}
 file=$(basename "${repo_config}")
 product="${file%.*}"
 
@@ -87,7 +87,7 @@ printf '%s\n' "${repo_list}"| while IFS= read -r repo_id; do
   n=0
   while [ $n -lt 2 ]; do
     echo "INFO: Starting createrepo run $n" 1>&2
-    ${cmd_createrepo} "${opts_createrepo}" "${path_repo}"
+    ${cmd_createrepo} ${opts_createrepo} "${path_repo}"
     exitcode=$?
     if [ $exitcode -eq 0 ];then break; fi
     echo "WARN: Createrepo run $n failed with exitcode $exitcode" 1>&2
