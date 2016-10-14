@@ -8,9 +8,10 @@ The `ezrepo-yum.sh` was largely inspired by this gist: https://gist.github.com/b
 * `ezrepo-yum.sh` - mirror a yum repo locally
 * `/cgi-bin/yum-mirrorlist.cgi` - cgi script to point clients to the local mirrors
 
+ezrepo-yum
+----------
 
-Usage: ezrepo-yum
------------------
+###Usage (without container):
 
 Cron Example:
 <pre>
@@ -18,8 +19,27 @@ Cron Example:
 0  2 * * * /usr/local/bin/ezrepo-yum.sh /etc/ezrepo/epel.repo
 </pre>
 
-Usage: /cgi-bin/yum-mirrorlist.cgi
-----------------------------------
+###Usage (container):
+
+####BUILD:
+
+<code>docker build -t ezrepo-plugin-yum .</code>
+
+####RUN:
+
+You can do a manual test of the container on your workstation.  It will download the rpms into the /download directory.
+
+```bash
+docker run\
+  -v ${PWD}/download:/var/www/repos/latest\
+  -v ${PWD}/config-examples/:/etc/ezrepo\
+  ezrepo-plugin-yum /etc/ezrepo/centos-7.repo
+```
+
+/cgi-bin/yum-mirrorlist.cgi
+---------------------------
+
+###Usage:
 
 Run it as a cgi script under apache (or other web server). A sample url would look like:
 
