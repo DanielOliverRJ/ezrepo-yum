@@ -23,17 +23,17 @@ Cron Example:
 
 ####BUILD:
 
-<code>docker build -t ezrepo-plugin-yum .</code>
+<code>docker build -t ezrepo-plugin-yum-el7 .</code>
 
 ####RUN:
 
-You can do a manual test of the container on your workstation.  It will download the rpms into the /download directory.
+You can do a manual test of the container on your workstation.  It will download the rpms into the download-test directory.
 
 ```bash
-docker run\
-  -v ${PWD}/download:/var/www/repos/latest\
-  -v ${PWD}/config-examples/:/etc/ezrepo\
-  ezrepo-plugin-yum /etc/ezrepo/centos-7.repo
+docker run --rm\
+  -v ${PWD}/download-test:/var/www/repos/latest\
+  -v ${PWD}/config-examples/:/etc/ezrepo:ro\
+  ezrepo-plugin-yum-el7 /etc/ezrepo/centos-7.repo
 ```
 
 /cgi-bin/yum-mirrorlist.cgi
