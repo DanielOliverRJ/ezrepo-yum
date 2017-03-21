@@ -19,6 +19,7 @@ path_base='/var/www/repos/latest'
 path_product="${path_base}/yum/${product}"
 
 arch='x86_64'
+keep=2
 
 #
 # reposync
@@ -32,6 +33,15 @@ arch='x86_64'
 #  -p  directory to download to
 #
 cmd_reposync='reposync -l --source --download-metadata -m'
+
+#
+# repomanage
+#  -c        to speed up run by not checking payload signatures
+#  --old     to print packages older than the ones we will keep
+
+#  -k        to set how many version of a package we will keep
+#
+cmd_repomanage='repomanage -c --old'
 
 #
 # createrepo
@@ -73,6 +83,14 @@ printf '%s\n' "${repo_list}"| while IFS= read -r repo_id; do
     n=$((n+1))
   done
 
+  # Purge old packages if non-zero number
+  if [ ${keep} -ne 0 ]; then
+    echo "INFO: Remove all but the ${keep} newest package versions" 1>&2
+    ${cmd_repomanage} -k"${keep}" "${path_repo}" | xargs rm -f
+  else
+    echo "INFO: Keeping all versions of the packages" 1>&2
+  fi
+
   # Add group data if available
   opts_createrepo=''
   if [ -f "${path_repo}/comps.xml" ]; then
@@ -99,9 +117,9 @@ printf '%s\n' "${repo_list}"| while IFS= read -r repo_id; do
   updateinfo=$(find "${path_repo}/*-updateinfo.xml.gz" 2>/dev/null | head -1 )
   if [ -f "$updateinfo" ] && [ $? -eq 0 ]; then
     echo "INFO: Errata - updating information for ${repo_id}" 1>&2
-    cp $updateinfo ${path_repo}/updateinfo.xml.gz
-    gunzip -df ${path_repo}/updateinfo.xml.gz
-    modifyrepo ${path_repo}/updateinfo.xml ${path_repo}/repodata/
+    cp "$updateinfo" "${path_repo}/updateinfo.xml.gz"
+    gunzip -df "${path_repo}/updateinfo.xml.gz"
+    modifyrepo "${path_repo}/updateinfo.xml" "${path_repo}/repodata/"
   else
     echo "INFO: Errata - nothing to be processed for ${repo_id}" 1>&2
   fi
