@@ -85,7 +85,10 @@ printf '%s\n' "${repo_list}"| while IFS= read -r repo_id; do
 
   # Purge old packages if non-zero number
   if [ ${keep} -ne 0 ]; then
+    echo "INFO: Remove all but the ${keep} newest package versions" 1>&2
     ${cmd_repomanage} -k"${keep}" "${path_repo}" | xargs rm -f
+  else
+    echo "INFO: Keeping all versions of the packages" 1>&2
   fi
 
   # Add group data if available
