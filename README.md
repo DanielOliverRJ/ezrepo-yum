@@ -11,7 +11,7 @@ The `ezrepo-yum.sh` was largely inspired by this gist: https://gist.github.com/b
 ezrepo-yum
 ----------
 
-###Usage (without container):
+### Usage (without container):
 
 Cron Example:
 <pre>
@@ -19,13 +19,13 @@ Cron Example:
 0  2 * * * /usr/local/bin/ezrepo-yum.sh /etc/ezrepo/epel.repo
 </pre>
 
-###Usage (container):
+### Usage (container):
 
-####BUILD:
+#### BUILD:
 
 <code>docker build -t ezrepo-plugin-yum-el7 .</code>
 
-####RUN:
+#### RUN:
 
 You can do a manual test of the container on your workstation.  It will download the rpms into the download-test directory.
 
@@ -39,7 +39,7 @@ docker run --rm\
 /cgi-bin/yum-mirrorlist.cgi
 ---------------------------
 
-###Usage:
+### Usage:
 
 Run it as a cgi script under apache (or other web server). A sample url would look like:
 
@@ -61,7 +61,7 @@ And the following custom parameters:
 
 See https://github.com/ezrepo/ezrepo-base for more about snapshotting.
 
-####Testing
+#### Testing
 
 You can give it a quick test from the command line by uncommenting line 4, to use the example list of mirrors, and passing a test `QUERY_STRING`:
 
@@ -70,17 +70,11 @@ QUERY_STRING='repo=epel-debug&arch=x86_64&product=epel&snap=20161103' ./yum-mirr
 ```
 
 Should output:
-```html
-Content-type: text/html
+```
+Content-type: text/plain
 
-<HTML>
-<BODY>
-<PRE>
 http://localhost/archive/20161103/yum/epel/x86_64/epel-debug/
 http://192.168.0.1:8080/archive/20161103/yum/epel/x86_64/epel-debug/
 http://192.168.0.2/archive/20161103/yum/epel/x86_64/epel-debug/
 http://mirror.local.localnet/archive/20161103/yum/epel/x86_64/epel-debug/
-</PRE>
-</BODY>
-</HTML>
 ```
