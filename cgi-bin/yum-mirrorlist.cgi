@@ -72,13 +72,10 @@ if [ 'latest' != "${FORM_snap}" ]; then
   FORM_snap="archive/${FORM_snap}"
 fi
 
-cat <<HTML_HEADER
-Content-type: text/html
+cat <<HTTP_HEADER
+Content-type: text/plain
 
-<HTML>
-<BODY>
-<PRE>
-HTML_HEADER
+HTTP_HEADER
 
 if [ -f "${MIRRORLIST}" ]; then
   while read -r mirror; do
@@ -87,9 +84,3 @@ if [ -f "${MIRRORLIST}" ]; then
 else
   echo '# No mirrors'
 fi
-
-cat <<HTML_FOOTER
-</PRE>
-</BODY>
-</HTML>
-HTML_FOOTER
